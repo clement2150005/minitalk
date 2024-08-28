@@ -6,7 +6,7 @@
 /*   By: ccolin <ccolin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/28 09:45:52 by ccolin            #+#    #+#             */
-/*   Updated: 2024/08/28 12:37:59 by ccolin           ###   ########.fr       */
+/*   Updated: 2024/08/28 12:53:39 by ccolin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ static void	ft_send_signals(char *str, int	PID)
 				kill(PID, SIG0);
 			else
 				kill(PID, SIG1);
-			usleep(2000);
+			usleep(100);
 		}
 		j = 8;
 		if (str[i] == '\0')
