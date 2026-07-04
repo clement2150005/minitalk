@@ -12,6 +12,14 @@
 
 #include "minitalk.h"
 
+static volatile sig_atomic_t	g_ack = 0;
+
+static void	ft_ack(int sig)
+{
+	(void)sig;
+	g_ack = 1;
+}
+
 static void	ft_error(int argc, char **argv)
 {
 	int	i;
@@ -34,12 +42,12 @@ static void	ft_error(int argc, char **argv)
 	if (kill(ft_atoi(argv[1]), 0) != 0)
 	{
 		ft_printf("Error\nThe provided PID does not belong to "
-		"any running process\n");
+			"any running process\n");
 		exit(1);
 	}
 }
 
-static void	ft_send_signals(char *str, int	PID)
+static void	ft_send_signals(char *str, int PID)
 {
 	int	i;
 	int	j;
@@ -50,11 +58,14 @@ static void	ft_send_signals(char *str, int	PID)
 	{
 		while (j--)
 		{
+			g_ack = 0;
 			if (((str[i] >> j) & 1) == 0)
 				kill(PID, SIG0);
 			else
 				kill(PID, SIG1);
-			usleep(100);
+			while (!g_ack)
+				usleep(50);
+			usleep(10);
 		}
 		j = 8;
 		if (str[i] == '\0')
@@ -65,7 +76,13 @@ static void	ft_send_signals(char *str, int	PID)
 
 int	main(int argc, char **argv)
 {
+	struct sigaction	sa;
+
 	ft_error(argc, argv);
+	sa.sa_handler = ft_ack;
+	sigemptyset(&sa.sa_mask);
+	sa.sa_flags = 0;
+	sigaction(SIGUSR1, &sa, NULL);
 	ft_send_signals(argv[2], ft_atoi(argv[1]));
 	return (0);
 }

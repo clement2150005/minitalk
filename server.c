@@ -12,11 +12,12 @@
 
 #include "minitalk.h"
 
-static void	ft_receive_signals(int	sig)
+static void	ft_receive_signals(int sig, siginfo_t *info, void *context)
 {
 	static int	i;
 	static char	c;
 
+	(void)context;
 	if (sig == SIG1)
 		c |= (1 << (7 - i));
 	i++;
@@ -29,13 +30,19 @@ static void	ft_receive_signals(int	sig)
 		i = 0;
 		c = 0;
 	}
+	kill(info->si_pid, SIGUSR1);
 }
 
 int	main(void)
 {
+	struct sigaction	sa;
+
 	ft_printf("Server PID = [%d]\nWaiting for messages...\n\n", getpid());
-	signal(SIG0, ft_receive_signals);
-	signal(SIG1, ft_receive_signals);
+	sa.sa_sigaction = ft_receive_signals;
+	sigemptyset(&sa.sa_mask);
+	sa.sa_flags = SA_SIGINFO;
+	sigaction(SIG0, &sa, NULL);
+	sigaction(SIG1, &sa, NULL);
 	while (1)
 		pause();
 }
