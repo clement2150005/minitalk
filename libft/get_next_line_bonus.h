@@ -17,6 +17,10 @@
 # include <unistd.h>
 # include <limits.h>
 
+# ifndef OPEN_MAX
+#  define OPEN_MAX 1024
+# endif
+
 # define BUFFER_SIZE 1024
 
 void	*ft_gnl_memset(void *b, int c, size_t len);
