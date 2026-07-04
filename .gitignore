@@ -1,0 +1,9 @@
+# Build artifacts
+server
+client
+*.o
+*.a
+
+# Editor and OS
+.vscode/
+.DS_Store
